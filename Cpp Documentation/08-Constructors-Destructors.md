@@ -1,48 +1,42 @@
 
-### **Concept 8: Constructors & Destructors**
+# Concept 8: Constructors & Destructors (Lifecycle)
 
-#### **1. Deep Explanation (The Logic)**
-
+## 1. Deep Explanation (The Logic)
 Objects in C++ have a **Lifecycle**. They are born, they do work, and they die.
 C++ gives you two special functions to handle the exact moment of birth and death automatically.
 
-**A. The Constructor (Birth)**
 
-  * **What is it?** A function that runs **automatically** the instant an object is created.
-  * **Purpose:** To set up the object. You initialize variables, open files, or connect to hardware.
-  * **Logic:** You cannot drive a car before turning the key. The Constructor is the "Key Turn."
 
-**B. The Destructor (Death)**
+### A. The Constructor (Birth) 
+* **What is it?** A function that runs **automatically** the instant an object is created.
+* **Purpose:** To set up the object. You initialize variables, open files, or connect to hardware.
+* **Logic:** You cannot drive a car before turning the key. The Constructor is the "Key Turn."
 
-  * **What is it?** A function that runs **automatically** the instant an object is destroyed (goes out of scope).
-  * **Purpose:** To clean up. You close files, disconnect from Wi-Fi, or free up memory.
-  * **Logic:** If you leave the house (scope), you must turn off the lights (Destructor). If you don't, you waste electricity (Memory Leak).
+### B. The Destructor (Death) 💀
+* **What is it?** A function that runs **automatically** the instant an object is destroyed (goes out of scope).
+* **Purpose:** To clean up. You close files, disconnect from Wi-Fi, or free up memory.
+* **Logic:** If you leave the house (scope), you must turn off the lights (Destructor). If you don't, you waste electricity (**Memory Leak**).
 
------
+---
 
-#### **2. Why do we use it? (RAII)**
+## 2. Why do we use it? (RAII)
+There is a famous C++ philosophy called **RAII (Resource Acquisition Is Initialization)**.
 
-There is a famous C++ philosophy called **RAII** (Resource Acquisition Is Initialization).
+1.  **Safety:** We never want an "Uninitialized" robot. If a Motor object exists, it must be connected and ready. We put that logic in the Constructor.
+2.  **Cleanup:** If your code crashes or finishes a function, the Destructor runs automatically. This ensures the robot doesn't leave motors spinning or cameras recording forever.
 
-  * **Safety:** We never want an "Uninitialized" robot. If a `Motor` object exists, it *must* be connected and ready. We put that logic in the Constructor.
-  * **Cleanup:** If your code crashes or finishes a function, the Destructor runs automatically. This ensures the robot doesn't leave motors spinning or cameras recording forever.
+---
 
------
+## 3. Syntax & Rules
 
-#### **3. Syntax & Rules**
+### A. The Constructor
+* **Name:** Must be **exactly the same** as the Class name.
+* **Return Type:** None (not even `void`).
+* **Overloading:** You can have multiple constructors (one with no arguments, one with arguments).
 
-**A. The Constructor**
-
-  * **Name:** Must be **exactly** the same as the Class name.
-  * **Return Type:** None (not even `void`).
-  * **Overloading:** You can have multiple constructors (one with no arguments, one with arguments).
-
-**B. The Destructor**
-
-  * **Name:** Same as Class name but with a **Tilde (`~`)** in front.
-  * **Arguments:** None. You cannot pass data to a destructor; it runs on its own.
-
-<!-- end list -->
+### B. The Destructor
+* **Name:** Same as Class name but with a **Tilde (`~`)** in front.
+* **Arguments:** None. You cannot pass data to a destructor; it runs on its own.
 
 ```cpp
 class LidarSensor {
@@ -57,21 +51,21 @@ public:
         // Code to disconnect/shutdown
     }
 };
-```
+````
 
 -----
 
-#### **4. The Trap: "The Default Constructor"**
+## 4\. The Trap: "The Default Constructor" ⚠️
 
-If you write a class **without** a constructor, C++ creates a "hidden" empty one for you.
+If you write a class without a constructor, C++ creates a "hidden" empty one for you.
 
-  * **The Bug:** The hidden constructor does **not** set variables to zero.
-  * **Result:** `int speed` inside the class will contain garbage data.
-  * **Fix:** Always write your own constructor to initialize variables to 0, false, or NULL.
+  * **The Bug:** The hidden constructor does not set variables to zero.
+  * **Result:** `int speed` inside the class will contain **garbage data**.
+  * **Fix:** Always write your own constructor to initialize variables to `0`, `false`, or `NULL`.
 
 -----
 
-#### **5. Code Example**
+## 5\. Code Example
 
 ```cpp
 #include <iostream>
@@ -94,7 +88,7 @@ public:
 
     // --- DESTRUCTOR ---
     // Note the '~' symbol
-    // Runs when the object is deleted
+    // Runs automatically when the object is deleted
     ~NetworkConnection() {
         is_connected = false;
         std::cout << "[System] Closing connection to " << ip_address << ". Bye!\n";
@@ -127,7 +121,7 @@ int main() {
 
 -----
 
-#### **6. ROS2 Context: "The Node Lifecycle"**
+## 6\. ROS2 Context: "The Node Lifecycle"
 
 In ROS2, almost everything happens in the Constructor.
 
@@ -149,28 +143,32 @@ public:
 };
 ```
 
-The **Destructor** is less visible in ROS2 because "Smart Pointers" usually handle the cleanup, but it is still used to shut down hardware drivers safely (e.g., sending a stop command to the wheels before the program quits).
+*Note: The Destructor is less visible in ROS2 because "Smart Pointers" usually handle the cleanup, but it is still used to shut down hardware drivers safely (e.g., sending a stop command to the wheels before the program quits).*
 
 -----
 
-#### **7. Task: "The Secure Session"**
+## 7\. Task: "The Secure Session" ✅
 
 **Scenario:**
-You are writing a Logger system. When a logging session starts, it must print "Log Started". When it ends, it **must** print "Log Saved & Closed" to ensure data isn't lost.
+You are writing a **Logger system**. When a logging session starts, it must print "Log Started". When it ends, it must print "Log Saved & Closed" to ensure data isn't lost.
 
 **Requirements:**
 
 1.  Create a class named `Logger`.
-2.  **Constructor:** Print "--- LOG STARTED ---".
-3.  **Destructor:** Print "--- LOG SAVED & CLOSED ---".
-4.  **In Main:**
-      * Print "Step 1".
-      * Create a **Scope** using curly braces `{ }`.
-      * Inside the scope, create a `Logger` object.
-      * Print "Step 2 (Inside Scope)".
-      * Close the scope `}`.
-      * Print "Step 3 (Outside Scope)".
-5.  **Observation:**
-      * Look at the order of prints.
-      * Did "LOG SAVED" appear *before* "Step 3"?
-      * If yes, you have successfully understood how Destructors automate cleanup.
+2.  **Constructor:** Print `"--- LOG STARTED ---"`.
+3.  **Destructor:** Print `"--- LOG SAVED & CLOSED ---"`.
+
+**In Main:**
+
+1.  Print `"Step 1"`.
+2.  Create a Scope using curly braces `{ }`.
+3.  Inside the scope, create a `Logger` object.
+4.  Print `"Step 2 (Inside Scope)"`.
+5.  Close the scope `}`.
+6.  Print `"Step 3 (Outside Scope)"`.
+
+**Observation:**
+Look at the order of prints in the terminal.
+
+  * Did "LOG SAVED" appear **before** "Step 3"?
+  * *If yes, you have successfully understood how Destructors automate cleanup.*
