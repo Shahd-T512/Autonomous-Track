@@ -141,29 +141,41 @@ ROS2 relies heavily on this for **Managed Nodes (Lifecycle)**.
 
 -----
 
-## 7\. Task: "The Payment Gateway" ✅
+
+### **Task 7: The Payment Gateway (Polymorphism)**
 
 **Scenario:**
-You are building a vending machine that accepts different payment methods.
+You are developing the software for a modern vending machine. The machine needs to handle different payment methods (like Credit Cards and Cash) uniformly using a single interface.
 
 **Requirements:**
 
-1.  **Base Class:** `PaymentMethod`
-      * Function: `virtual void pay(double amount)`
-      * Default behavior: Print "Generic Payment".
-2.  **Derived Class:** `CreditCard`
-      * Override `pay`: Print "Processing Credit Card: $[amount]".
-3.  **Derived Class:** `Cash`
-      * Override `pay`: Print "Accepting Cash: $[amount]".
+1. **Create a Base Class** named `PaymentMethod`:
+* Add a public function: `virtual void pay(double amount)`.
+* **Default Behavior:** It should print `"Generic Payment processing..."`.
+* *Note: The `virtual` keyword is crucial here to enable Polymorphism.*
 
-**The Logic Puzzle (Main):**
 
-1.  Create a pointer `PaymentMethod* ptr`.
-2.  Create a `CreditCard` object named `my_card`.
-3.  Point `ptr` to the address of `my_card` (`ptr = &my_card`).
-4.  Call `ptr->pay(15.0)`.
+2. **Create a Derived Class** named `CreditCard` that inherits from `PaymentMethod`:
+* **Override** the `pay` function.
+* **New Behavior:** It should print `"Processing Credit Card payment of $[amount]"`.
 
-**Success Condition:**
 
-  * If it prints **"Processing Credit Card..."**, you successfully used Polymorphism.
-  * If it prints **"Generic Payment"**, you forgot the `virtual` keyword. Go back and fix it.
+3. **Create a Derived Class** named `Cash` that inherits from `PaymentMethod`:
+* **Override** the `pay` function.
+* **New Behavior:** It should print `"Accepting Cash payment of $[amount]"`.
+
+
+
+**The Challenge (In Main Function):**
+
+1. Instantiate a `CreditCard` object (e.g., `myCard`).
+2. Create a **Base Class Reference** named `paymentSystem` that refers to `myCard`:
+* Syntax hint: `PaymentMethod& paymentSystem = myCard;`
+
+
+3. Call `paymentSystem.pay(15.50);`.
+
+**Success Criteria:**
+
+* If the console prints **"Processing Credit Card payment..."**, you have successfully implemented Polymorphism using references.
+* If it prints **"Generic Payment processing..."**, the virtual dispatch failed (check your `virtual` keyword!).
