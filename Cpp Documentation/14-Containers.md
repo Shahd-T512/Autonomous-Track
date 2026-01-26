@@ -48,15 +48,14 @@ Read more: https://www.geeksforgeeks.org/cpp/vector-in-cpp-stl/
 ```cpp
 #include <iostream>
 #include <map>
-using namespace std;
 
 int main() {
     
     // Creating an empty map
-    map<int, string> m1;
+    std::map<int, string> m1;
 
     // Initialze map with list
-    map<int, string> m2 = {{1, "Geeks"},
+    std::map<int, string> m2 = {{1, "Geeks"},
               {2, "For"}, {3, "Geeks"}};
 
     for (auto& p : m2)
