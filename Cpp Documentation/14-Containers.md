@@ -41,6 +41,7 @@ distances.push_back(50); // Add 50 to the end
 distances.push_back(25); // Add 25 to the end (Size is now 2)
 
 ```
+Read more: https://www.geeksforgeeks.org/cpp/vector-in-cpp-stl/
 
 ### B. Map (Key-Value)
 
@@ -65,6 +66,7 @@ int main() {
 }
 
 ```
+Read More: https://www.geeksforgeeks.org/cpp/map-associative-containers-the-c-standard-template-library-stl/
 
 ---
 
