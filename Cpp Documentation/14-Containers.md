@@ -45,9 +45,24 @@ distances.push_back(25); // Add 25 to the end (Size is now 2)
 ### B. Map (Key-Value)
 
 ```cpp
-std::map<std::string, int> motors;
-motors["Front_Left"] = 1;
-motors["Front_Right"] = 2;
+#include <iostream>
+#include <map>
+using namespace std;
+
+int main() {
+    
+    // Creating an empty map
+    map<int, string> m1;
+
+    // Initialze map with list
+    map<int, string> m2 = {{1, "Geeks"},
+              {2, "For"}, {3, "Geeks"}};
+
+    for (auto& p : m2)
+        cout << p.first << " " <<
+        p.second << endl;
+    return 0;
+}
 
 ```
 
